@@ -1,6 +1,6 @@
 package myspring.ioc.service;
 
-import myspring.ioc.annotion.MyService;
+import myspring.annotations.MyService;
 
 @MyService
 public class SayService {

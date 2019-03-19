@@ -2,8 +2,8 @@ package myspring.servlet;
 
 import myspring.annotations.MyController;
 import myspring.annotations.MyRequestMapping;
-import myspring.ioc.annotion.MyAutowired;
-import myspring.ioc.annotion.MyService;
+import myspring.annotations.MyAutowired;
+import myspring.annotations.MyService;
 import myspring.util.AnnotationUtil;
 import myspring.util.ClassUtil;
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +17,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,11 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MyDispacherServlet extends HttpServlet {
     //key为类名小写
     private ConcurrentHashMap<String, Object> beans = new ConcurrentHashMap<>();
-    //key为url
+    //key为url controllers
     private ConcurrentHashMap<String, Object> controllers = new ConcurrentHashMap<>();
     //key为url value 为方法名
     private ConcurrentHashMap<String, String> methods = new ConcurrentHashMap<>();
-
+    ConcurrentHashMap<String, Object> services = new ConcurrentHashMap<>();
     @Override
     public void init() throws ServletException {
         System.out.println("init method has bean called!");
@@ -82,11 +81,11 @@ public class MyDispacherServlet extends HttpServlet {
     }
 
     //根据id获取对象
-    public Object getBean(String id) throws Exception {
-        if (beans.isEmpty()) {
+    public Object getBean(Map map,String id) throws Exception {
+        if (map.isEmpty()) {
             throw new Exception("该包下不含带注解的类");
         }
-        Object o = beans.get(id);
+        Object o = map.get(id);
         if (o == null) {
             throw new Exception("查找不到指定类");
         }
@@ -107,7 +106,7 @@ public class MyDispacherServlet extends HttpServlet {
             field.setAccessible(true);
             if (AnnotationUtil.testFieldHasAnnotion(field, MyAutowired.class)) {
                 String id = toLowerCaseFirstOne(field.getType().getSimpleName());
-                field.set(o, getBean(id));
+                field.set(o, getBean(services,id));
             }
         }
     }
@@ -118,6 +117,9 @@ public class MyDispacherServlet extends HttpServlet {
         for (Class classNow : classes) {
             if (AnnotationUtil.testClassHasAnnotion(classNow, MyController.class)) {
                 beans.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
+            }
+            if (AnnotationUtil.testClassHasAnnotion(classNow, MyService.class)) {
+                services.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
             }
         }
     }

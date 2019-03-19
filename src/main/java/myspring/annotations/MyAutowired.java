@@ -1,4 +1,4 @@
-package myspring.ioc.annotion;
+package myspring.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

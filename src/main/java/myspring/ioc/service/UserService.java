@@ -1,7 +1,7 @@
 package myspring.ioc.service;
 
-import myspring.ioc.annotion.MyAutowired;
-import myspring.ioc.annotion.MyService;
+import myspring.annotations.MyAutowired;
+import myspring.annotations.MyService;
 
 @MyService
 public class UserService {
