@@ -7,6 +7,6 @@
 <title>home</title>
 </head>
 <body>
-	<h1>mainPage</h1>
+	<h1>mainPage index</h1>
 </body>
 </html>

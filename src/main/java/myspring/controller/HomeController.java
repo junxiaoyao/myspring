@@ -11,9 +11,14 @@ import myspring.annotations.MyRequestMapping;
 @MyController
 @MyRequestMapping(url = "/home")
 public class HomeController {
-    @MyRequestMapping(url = "/index")
+    @MyRequestMapping(url = "/home")
     public String home() {
         System.out.println("跳转至首页");
         return "home";
+    }
+    @MyRequestMapping(url = "/index")
+    public String index() {
+        System.out.println("跳转至首页");
+        return "index";
     }
 }

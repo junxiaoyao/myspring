@@ -166,6 +166,16 @@ public class MyDispacherServlet extends HttpServlet {
         return "";
     }
 
+    //根据url结束的查找key
+    public String getUrl2(Map<String, ?> map, String url) {
+        for (String key : map.keySet()) {
+            if (url.endsWith(key)) {
+                return key;
+            }
+        }
+        return "";
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //转发都post方法
@@ -186,7 +196,7 @@ public class MyDispacherServlet extends HttpServlet {
             return;
         }
         // 使用url地址获取方法
-        String methodKey = getUrl(methods, requestURI);
+        String methodKey = getUrl2(methods, requestURI);
         String methodName = methods.get(methodKey);
         if (StringUtils.isEmpty(methodName)) {
             notFoundPage(req, resp);
