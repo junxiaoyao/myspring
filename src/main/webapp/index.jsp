@@ -4,9 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>home</title>
 </head>
 <body>
-	<h1>手写springmvc.....</h1>
+	<h1>mainPage</h1>
 </body>
 </html>
