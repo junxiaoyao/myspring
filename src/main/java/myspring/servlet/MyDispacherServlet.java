@@ -99,6 +99,9 @@ public class MyDispacherServlet extends HttpServlet {
         for (Object o : beans.values()) {
             autowiredField(o);
         }
+        for (Object o : services.values()) {
+            autowiredField(o);
+        }
     }
 
     //装配对象的属性
