@@ -1,9 +1,7 @@
 package myspring.servlet;
 
-import myspring.annotations.MyController;
-import myspring.annotations.MyRequestMapping;
-import myspring.annotations.MyAutowired;
-import myspring.annotations.MyService;
+import myspring.annotations.*;
+import myspring.mybatis.proxy.SqlSessionManage;
 import myspring.util.AnnotationUtil;
 import myspring.util.ClassUtil;
 import org.apache.commons.lang.StringUtils;
@@ -33,10 +31,12 @@ public class MyDispacherServlet extends HttpServlet {
     private ConcurrentHashMap<String, String> methods = new ConcurrentHashMap<>();
     //services
     private ConcurrentHashMap<String, Object> services = new ConcurrentHashMap<>();
+    //daos
+    private ConcurrentHashMap<String, Object> daos = new ConcurrentHashMap<>();
 
     @Override
     public void init() throws ServletException {
-        System.out.println("init method has bean called!");
+      //  System.out.println("init method has bean called!");
         try {
             initMain();
         } catch (Exception e) {
@@ -125,6 +125,9 @@ public class MyDispacherServlet extends HttpServlet {
             }
             if (AnnotationUtil.testClassHasAnnotion(classNow, MyService.class)) {
                 services.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
+            }
+            if (AnnotationUtil.testClassHasAnnotion(classNow, MyRepository.class)) {
+                services.put(toLowerCaseFirstOne(classNow.getSimpleName()), SqlSessionManage.getDao(classNow));
             }
         }
     }

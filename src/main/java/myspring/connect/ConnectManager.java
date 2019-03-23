@@ -13,13 +13,13 @@ import java.sql.Connection;
 @MyService
 public class ConnectManager {
     @MyAutowired
-    private ConnectionPool pool;
+    private static ConnectionPool pool;
 
-    public void releaseConnection(Connection connection) {
+    public static void releaseConnection(Connection connection) {
         pool.releaseConnection(connection);
     }
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         return pool.getConnection();
     }
 }

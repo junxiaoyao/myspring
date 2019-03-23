@@ -16,6 +16,7 @@ public class AnnotationUtil {
         }
         return false;
     }
+
     //判断Field是否含指定注解
     public static boolean testFieldHasAnnotion(Field field, Class annotion) {
         if (field.getAnnotation(annotion) != null) {
@@ -30,5 +31,10 @@ public class AnnotationUtil {
             return true;
         }
         return false;
+    }
+
+    //得到Method的指定注解
+    public static <T> T getMethodAnnotion(Method method, Class anotion) {
+        return (T) method.getAnnotation(anotion);
     }
 }

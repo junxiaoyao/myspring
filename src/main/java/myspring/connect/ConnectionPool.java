@@ -41,12 +41,12 @@ public class ConnectionPool {
     private AtomicInteger countConnections = new AtomicInteger();
 
     public ConnectionPool() {
-        System.out.println(" ConnectionPool ");
+        //  System.out.println(" ConnectionPool ");
         this.initMain();
     }
 
     private void initMain() {
-        System.out.println(" initMain ");
+        //  System.out.println(" initMain ");
         freeInit();
     }
 
@@ -59,14 +59,14 @@ public class ConnectionPool {
 
     //创建连接
     private Connection createConnection() {
-        System.out.println("创建连接");
+        //  System.out.println("创建连接");
         Connection connection = createConnectionUtil();
         //失败则递归
         if (isAlife(connection)) {
-            System.out.println("创建连接成功");
+            //  System.out.println("创建连接成功");
             return connection;
         } else {
-            System.out.println("创建连接失败");
+            // System.out.println("创建连接失败");
             return this.createConnection();
         }
     }
@@ -132,8 +132,7 @@ public class ConnectionPool {
     public Connection createConnectionUtil() {
         Connection connection = null;
         try {
-          Class d=  Class.forName(driverClassName);
-
+            Class d = Class.forName(driverClassName);
             connection = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException e) {
             System.out.println("driver loading fail！");
