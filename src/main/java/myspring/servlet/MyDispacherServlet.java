@@ -29,20 +29,21 @@ public class MyDispacherServlet extends HttpServlet {
     private ConcurrentHashMap<String, Object> controllers = new ConcurrentHashMap<>();
     //key为url value 为方法名
     private ConcurrentHashMap<String, String> methods = new ConcurrentHashMap<>();
-    //key首字母小写，services
-    private ConcurrentHashMap<String, Object> services = new ConcurrentHashMap<>();
-    //key首字母小写，daos
-    private ConcurrentHashMap<String, Object> daos = new ConcurrentHashMap<>();
+    //key首字母小写，service
+    private ConcurrentHashMap<String, Object> servicesBeans = new ConcurrentHashMap<>();
+    //key首字母小写，dao
+    private ConcurrentHashMap<String, Object> daosBeans = new ConcurrentHashMap<>();
 
     @Override
     public void init() throws ServletException {
-        //  System.out.println("init method has bean called!");
+        System.out.println("-------------------------------------init begin-----------------------------------------------------------------");
         try {
             initMain();
         } catch (Exception e) {
             System.out.println("something wrong with your spring application");
             e.printStackTrace();
         }
+        System.out.println("-------------------------------------init success----------------------------------------------------------------");
     }
 
     //初始化方法
@@ -84,13 +85,7 @@ public class MyDispacherServlet extends HttpServlet {
 
     //根据id获取对象
     public Object getBean(Map map, String id) throws Exception {
-        if (map.isEmpty()) {
-            throw new Exception("该包下不含带注解的类");
-        }
         Object o = map.get(id);
-       /* if (o == null) {
-            throw new ClassNotFoundException(map+"查找不到指定类:"+id);
-        }*/
         return o;
     }
 
@@ -99,7 +94,7 @@ public class MyDispacherServlet extends HttpServlet {
         for (Object o : controllersBeans.values()) {
             autowiredField(o);
         }
-        for (Object o : services.values()) {
+        for (Object o : servicesBeans.values()) {
             autowiredField(o);
         }
     }
@@ -113,16 +108,16 @@ public class MyDispacherServlet extends HttpServlet {
             if (AnnotationUtil.testFieldHasAnnotion(field, MyAutowired.class)) {
                 String id = toLowerCaseFirstOne(field.getType().getSimpleName());
                 //尝试service装配
-                Object fieldValue = getBean(services, id);
+                Object fieldValue = getBean(servicesBeans, id);
                 //service装配为空装配dao
                 if (fieldValue == null) {
-                    fieldValue = getBean(daos, id);
+                    fieldValue = getBean(daosBeans, id);
                 }
                 //找到赋值，未找到抛出异常
                 if (fieldValue != null) {
                     field.set(o, fieldValue);
                 } else {
-                    throw new ClassNotFoundException("自动装配失败，未找到beanId：" + id);
+                    throw new ClassNotFoundException("not found bean beanId：" + id);
                 }
             }
         }
@@ -138,10 +133,11 @@ public class MyDispacherServlet extends HttpServlet {
                 controllersBeans.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
             }
             if (AnnotationUtil.testClassHasAnnotion(classNow, MyService.class)) {
-                services.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
+                servicesBeans.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
             }
+            //dao采用代理实例化
             if (AnnotationUtil.testClassHasAnnotion(classNow, MyRepository.class)) {
-                daos.put(toLowerCaseFirstOne(classNow.getSimpleName()), SqlSessionManage.getDao(classNow));
+                daosBeans.put(toLowerCaseFirstOne(classNow.getSimpleName()), SqlSessionManage.getDao(classNow));
             }
         }
     }
