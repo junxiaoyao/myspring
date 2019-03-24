@@ -23,20 +23,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description:
  */
 public class MyDispacherServlet extends HttpServlet {
-    //key为类名小写
-    private ConcurrentHashMap<String, Object> beans = new ConcurrentHashMap<>();
+    //key首字母小写，controller
+    private ConcurrentHashMap<String, Object> controllersBeans = new ConcurrentHashMap<>();
     //key为url controllers
     private ConcurrentHashMap<String, Object> controllers = new ConcurrentHashMap<>();
     //key为url value 为方法名
     private ConcurrentHashMap<String, String> methods = new ConcurrentHashMap<>();
-    //services
+    //key首字母小写，services
     private ConcurrentHashMap<String, Object> services = new ConcurrentHashMap<>();
-    //daos
+    //key首字母小写，daos
     private ConcurrentHashMap<String, Object> daos = new ConcurrentHashMap<>();
 
     @Override
     public void init() throws ServletException {
-      //  System.out.println("init method has bean called!");
+        //  System.out.println("init method has bean called!");
         try {
             initMain();
         } catch (Exception e) {
@@ -55,7 +55,7 @@ public class MyDispacherServlet extends HttpServlet {
 
     //controllers装配
     public void handlerMappingObject() {
-        for (Object o : beans.values()) {
+        for (Object o : controllersBeans.values()) {
             if (AnnotationUtil.testClassHasAnnotion(o.getClass(), MyRequestMapping.class)) {
                 MyRequestMapping myRequestMapping = o.getClass().getAnnotation(MyRequestMapping.class);
                 controllers.put(myRequestMapping.url(), o);
@@ -88,15 +88,15 @@ public class MyDispacherServlet extends HttpServlet {
             throw new Exception("该包下不含带注解的类");
         }
         Object o = map.get(id);
-        if (o == null) {
-            throw new Exception("查找不到指定类");
-        }
+       /* if (o == null) {
+            throw new ClassNotFoundException(map+"查找不到指定类:"+id);
+        }*/
         return o;
     }
 
     //装配对象的属性主方法
     public void autowiredFields() throws Exception {
-        for (Object o : beans.values()) {
+        for (Object o : controllersBeans.values()) {
             autowiredField(o);
         }
         for (Object o : services.values()) {
@@ -109,25 +109,39 @@ public class MyDispacherServlet extends HttpServlet {
         Field[] fields = o.getClass().getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
+            //装配controll
             if (AnnotationUtil.testFieldHasAnnotion(field, MyAutowired.class)) {
                 String id = toLowerCaseFirstOne(field.getType().getSimpleName());
-                field.set(o, getBean(services, id));
+                //尝试service装配
+                Object fieldValue = getBean(services, id);
+                //service装配为空装配dao
+                if (fieldValue == null) {
+                    fieldValue = getBean(daos, id);
+                }
+                //找到赋值，未找到抛出异常
+                if (fieldValue != null) {
+                    field.set(o, fieldValue);
+                } else {
+                    throw new ClassNotFoundException("自动装配失败，未找到beanId：" + id);
+                }
             }
         }
     }
 
-    //实例化所有带MyController注解的类
+    /**
+     * 实例化所有带MyController，MyService，MyRepository注解的类
+     */
     public void getObjects() throws InstantiationException, IllegalAccessException {
         List<Class<?>> classes = ClassUtil.getClasses("myspring");
         for (Class classNow : classes) {
             if (AnnotationUtil.testClassHasAnnotion(classNow, MyController.class)) {
-                beans.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
+                controllersBeans.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
             }
             if (AnnotationUtil.testClassHasAnnotion(classNow, MyService.class)) {
                 services.put(toLowerCaseFirstOne(classNow.getSimpleName()), newInstance(classNow));
             }
             if (AnnotationUtil.testClassHasAnnotion(classNow, MyRepository.class)) {
-                services.put(toLowerCaseFirstOne(classNow.getSimpleName()), SqlSessionManage.getDao(classNow));
+                daos.put(toLowerCaseFirstOne(classNow.getSimpleName()), SqlSessionManage.getDao(classNow));
             }
         }
     }

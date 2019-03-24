@@ -7,15 +7,15 @@ import myspring.mybatis.entity.Names;
 
 /**
  * @Auther: jxy
- * @Date: 2019/3/19 15:25
+ * @Date: 2019/3/24 11:09
  * @Description:
  */
 @MyService
-public class HomeService {
+public class NamesServices {
     @MyAutowired
-    private NamesServices services;
-    public void say(){
-        Names names = services.getById(6l);
-        System.out.println("i am home services!");
+    private NameDao dao;
+
+    public Names getById(long id) {
+        return dao.getById(id);
     }
 }
