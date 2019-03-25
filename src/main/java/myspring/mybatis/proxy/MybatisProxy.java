@@ -59,7 +59,7 @@ public class MybatisProxy implements InvocationHandler {
         return insertAndUpdate(myUpdate.value(), method, args);
     }
 
-    //更新查询操作
+    //新增查询操作
     private Object insertAndUpdate(String sql, Method method, Object[] args) throws Exception {
         Map<String, Integer> mapSql = new HashMap<>();
         sql = sqlModify(sql, mapSql);
