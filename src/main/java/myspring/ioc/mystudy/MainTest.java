@@ -8,7 +8,7 @@ import myspring.ioc.xmlUtil.ClassXmlPathApplication;
  * @Date: 2019/3/18 11:04
  * @Description:
  */
-public class mainTest {
+public class MainTest {
     public static void main(String[] args) throws Exception {
         ClassXmlPathApplication classXmlPathApplication = new ClassXmlPathApplication("myspring.xml");
         User user =(User) classXmlPathApplication.getBean("user");

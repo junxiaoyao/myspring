@@ -25,9 +25,11 @@ import java.util.Calendar;
 public class HomeController {
     @MyAutowired
     private HomeService homeService;
+
     @MyRequestMapping(url = "/home")
     public String home() {
         homeService.say();
+        int count = homeService.add();
         System.out.println("跳转至home.jsp");
         return "home";
     }

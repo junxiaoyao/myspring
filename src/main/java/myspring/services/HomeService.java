@@ -14,8 +14,13 @@ import myspring.mybatis.entity.Names;
 public class HomeService {
     @MyAutowired
     private NamesServices services;
-    public void say(){
+
+    public void say() {
         Names names = services.getById(6l);
         System.out.println("i am home services!");
+    }
+
+    public int add() {
+        return services.add();
     }
 }

@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConnectionPool {
     //驱动名称
     private String driverClassName = "com.mysql.jdbc.Driver";
-    private String url = "jdbc:mysql://localhost:3306/myspring?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC";
+    private String url = "jdbc:mysql://118.24.188.79:3306/myspring?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC";
     private String username = "root";
     private String password = "123456";
     //初始值
